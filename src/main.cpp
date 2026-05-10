@@ -1,55 +1,45 @@
 #include "main.h"
-#include "lemlog/logger/sinks/terminal.hpp"
-#include "hardware/Motor/MotorGroup.hpp"
-#include "hardware/IMU/V5InertialSensor.hpp"
-#include "lemlib/tracking/TrackingWheelOdom.hpp"
-#include "lemlib/motions/turnTo.hpp"
-#include "pros/llemu.hpp"
+#include "auto_selector/selector.hpp"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
+#include "pros/screen.h"
+#include "pros/screen.hpp"
 
-logger::Terminal terminal;
-
-lemlib::MotorGroup rightDrive({8, 10}, 360_rpm);
-lemlib::MotorGroup leftDrive({-1, 11, -12, 13}, 360_rpm);
-
-lemlib::V5InertialSensor imu(1);
-
-lemlib::TrackingWheel verticalTracker('E', 'F', true, 2.75_in, 26.5_cm / 2);
-lemlib::TrackingWheel horizontalTracker('G', 'H', false, 2.75_in, -26.5_cm / 2);
-
-lemlib::TrackingWheelOdometry odom({&imu}, {&verticalTracker}, {&horizontalTracker});
-
-lemlib::PID pid(0.05, 0, 0);
-lemlib::ExitCondition<AngleRange> exitCondition(1_stDeg, 2_sec);
-
+    selector new_selector; //its important to have this as an object where your methods can reach them obs
+void test_auto(){
+    pros::screen::set_pen(pros::Color::white);
+    pros::screen::fill_rect(0,0,200,480);
+    pros::screen::print(pros::E_TEXT_LARGE, 0, "test auto");
+    pros::screen::print(pros::E_TEXT_SMALL, 2, "just a test lmao");
+}
 void initialize() {
-    terminal.setLoggingLevel(logger::Level::DEBUG);
     pros::lcd::initialize();
+    new_selector.add_routine("new_routine","just a test lmao1",test_auto);
+    new_selector.add_routine("new_routine2","just a test lmao2",test_auto);
+    new_selector.add_routine("new_routine3","just a test lmao3",test_auto);
+    new_selector.add_routine("new_routine4","just a test lmao4",test_auto);
+    new_selector.add_routine("new_routine5","just a test lmao5",test_auto); //this adds a new routine of name new routine5 , a description then the function you want it to run
+    new_selector.add_routine("new_routine6","just a test lmao6",test_auto);
+    new_selector.add_routine("new_routine7","just a test lmao7",test_auto);
+    new_selector.add_routine("new_routine8","just a test lmao8",test_auto);    
+    pros::Task(new_selector.start, &new_selector);  //important you pass the selector reference aswell or it will DIEEE
 
-    imu.calibrate();
-    pros::delay(3200);
-    odom.startTask();
-    pros::delay(100);
-    pros::Task([&] {
-        while (true) {
-            auto p = odom.getPose();
-            pros::lcd::print(0, "X: %f", to_in(p.x));
-            pros::lcd::print(1, "Y: %f", to_in(p.y));
-            pros::lcd::print(2, "Theta: %f", to_cDeg(p.orientation));
-            pros::delay(10);
-        }
-    });
-    lemlib::turnTo(90_cDeg, 100_sec, {.slew = 1},
-                   {
-                       .angularPID = pid,
-                       .exitConditions = std::vector<lemlib::ExitCondition<AngleRange>>({exitCondition}),
-                       .poseGetter = [] -> units::Pose { return odom.getPose(); },
-                       .leftMotors = leftDrive,
-                       .rightMotors = rightDrive,
-                   });
 }
 
 void disabled() {}
 
-void autonomous() {}
+void autonomous() {
+    new_selector.run(); //obviously runs whatever is selected
+    new_selector.stop();
+}
 
-void opcontrol() {}
+void opcontrol() {
+    pros::Controller master = pros::Controller(pros::E_CONTROLLER_MASTER);
+    while(1){
+        if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+            autonomous();
+            new_selector.stop(); //stops the menu loop
+        }
+        pros::delay(20);
+    }
+}
