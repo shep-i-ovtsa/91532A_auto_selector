@@ -1,0 +1,3 @@
+since this is a standalone auto selector it will work aslong as you are in pros c++.make sure to include selector.hpp in your main file then add an object of it, create a task once you added your runs and have the task run .start();
+the videos only work using our special format so go to our bad_apple_player and run the setup script to install local dependencies and converter script(the cli has more options just run --help for a guide)
+to get a video for the image objects. to customise the menu go to the start function of selector.hpp and start adding, subtracting, or just modifying the existing objects.
