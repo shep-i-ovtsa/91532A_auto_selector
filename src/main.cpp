@@ -41,7 +41,7 @@ void initialize() {
     //logif.open("/usd/9mm.apl"); //by default we load files into memory which is fine for small files, but if your file is too huge for memory use open to stream it instead
     auto& auto2 = new_selector.make_image({252, 140}, {474, 234},"/usd/apple.apl", true);
     logif.set_visible(false);
-    auto2.set_visible(false);
+    auto2.set_visible(false); 
 
     auto reset_all = [&]() {
     logif.set_visible(false); logif.reset();
