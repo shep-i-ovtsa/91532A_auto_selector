@@ -9,38 +9,24 @@ class compositor {
 public:
     static constexpr int SCREEN_W = 480;
     static constexpr int SCREEN_H = 240;
-
     std::vector<uint8_t> screen;
-
     compositor() {
         screen.resize(static_cast<size_t>(SCREEN_W * SCREEN_H), 255);
     }
-
     void clear() {
         std::fill(screen.begin(), screen.end(), static_cast<uint8_t>(255));
     }
-
     void present() {
         for (int row = 0; row < SCREEN_H; ++row) {
             const int row_off = row * SCREEN_W;
-
-            int     run_start = 0;
+            int run_start = 0;
             uint8_t run_color = screen[row_off];
-
             for (int col = 1; col <= SCREEN_W; ++col) {
                 uint8_t cur = (col < SCREEN_W) ? screen[row_off + col]
                                                : static_cast<uint8_t>(~run_color);
 
                 if (cur != run_color) {
-                    if (run_color != 255) {
-                        pros::screen::set_pen(palette[run_color]);
-                        pros::screen::fill_rect(
-                            run_start,         
-                            row,               
-                            col,                
-                            row + 1           
-                        );
-                    }
+                    if (run_color != 255) {pros::screen::set_pen(palette[run_color]);pros::screen::fill_rect(run_start,row,col,row +1);}
                     run_start = col;
                     run_color = cur;
                 }
@@ -49,10 +35,9 @@ public:
     }
 
 private:
-    
     std::array<pros::Color, 64> palette = {{
         pros::Color::black,              // 0
-        pros::Color::white,              // 1
+        pros::Color::white,              // 1 //binary color scheme
         pros::Color::red,                // 2
         pros::Color::lime,               // 3
         pros::Color::blue,               // 4
@@ -67,7 +52,7 @@ private:
         pros::Color::navy,               // 13
         pros::Color::teal,               // 14
         pros::Color::olive,              // 15
-        pros::Color::coral,              // 16
+        pros::Color::coral,              // 16 //16 bit color scheeme
         pros::Color::salmon,             // 17
         pros::Color::gold,               // 18
         pros::Color::yellow_green,       // 19
@@ -114,6 +99,6 @@ private:
         pros::Color::light_gray,         // 60
         pros::Color::light_pink,         // 61
         pros::Color::light_salmon,       // 62
-        pros::Color::light_yellow,       // 63
+        pros::Color::light_yellow,       // 63 64 color scheme 
     }};
 };

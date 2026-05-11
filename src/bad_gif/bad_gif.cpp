@@ -1,4 +1,4 @@
-#include "bad_gif.hpp"
+#include "bad_gif/bad_gif.hpp"
 #include <algorithm>
 
 void video_stream::parseHeader(const std::string& line) {

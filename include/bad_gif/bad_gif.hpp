@@ -6,7 +6,8 @@
 #include <vector>
 
 class video_stream {
-public:
+    public:
+
     int width = 0; 
     int height = 0;
 
@@ -31,7 +32,19 @@ public:
     bool update(unsigned long now);
 
     void renderTo(std::vector<uint8_t>& target, int targetW, int targetH) const;
-
+    void reset() {
+        current_frame_idx = -1; //resets our current frame to the beggining
+        ended = false;
+        next_frame_time = 0;
+        // streaming mode — seek back past the header
+        if (streaming) {
+            stream_file.clear();
+            stream_file.seekg(0);
+            std::string line;
+            std::getline(stream_file, line);
+            std::getline(stream_file, line); //skip our headers since the info is already loaded
+        }
+    }
     int frame_count() const { return static_cast<int>(frame_cache.size()); }
 
 private:
