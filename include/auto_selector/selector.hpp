@@ -207,7 +207,9 @@ class selector {
     static pros::Color current_color;
     routine selected_route = bug_breaker;
     std::vector<routine> route_list;
-
+    std::deque<element> screen_elements;
+    std::deque<button> button_list;
+    std::deque<image> image_list;
     private:
 
     static void bug_breakers() {}
@@ -226,9 +228,7 @@ class selector {
     bool dirty = true;
 
     position currently_pressed{0, 0};
-    std::deque<element> screen_elements;
-    std::deque<button> button_list;
-    std::deque<image> image_list;
+
     public:
     element& make_element(position chord1, position chord2){
         element new_element(chord1 , chord2);

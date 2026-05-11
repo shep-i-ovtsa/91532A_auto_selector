@@ -15,7 +15,7 @@ void test_auto(){
 }
 
 void initialize() {
-    new_selector.user_menu = [&]() { //! THIS MY CHILDREN is the tutorial on how to use my ui system!
+    new_selector.user_menu = [&]() { //! THIS MY CHILDREN, is the tutorial on how to use my ui system! good luck
 
     //make_element creates the element directly inside the selector and gives
     //you back a reference to it. It lives as long as the selector does so you dont have to worry about dangling copies trying to call from cleared memory
@@ -35,6 +35,9 @@ void initialize() {
         selector::draw_text(8, 4, "Auton Selector  >.<  tap a routine to select"); //this is just a helper function to draw text on the screen
     };
 
+
+
+
     //make image follows the same pattern. you set the boundary points, but this time we actually have to put in the link to our video file
     //since we use my bad apple player(modified for this ofc) you need to convert videos into the right format using our converter but its super easy
     auto& logif = new_selector.make_image({252, 140}, {474, 234},"/usd/9mm.apl" , true);
@@ -43,10 +46,7 @@ void initialize() {
     logif.set_visible(false);
     auto2.set_visible(false); 
 
-    auto reset_all = [&]() {
-    logif.set_visible(false); logif.reset();
-    auto2.set_visible(false); auto2.reset();
-    };
+
     // get_selected() lets you read whichever routine the user has tapped because this is an auto selector ofcourse
     auto& info_panel = new_selector.make_element({248, 28}, {474, 234});
     info_panel.set_background_color(pros::Color::dark_blue);
@@ -71,13 +71,15 @@ void initialize() {
             selector::draw_text(b.chord1.x + 6, b.chord1.y + 7,route.routine_name);
         };
 
-        b.on_click([&, route, reset_all]() {
+        b.on_click([&, route]() {
             new_selector.select_routine(route);
             pros::screen::set_pen(pros::Color::white);
             pros::screen::fill_rect(0, 0, 480, 240);
-            reset_all();
+            for(selector::image i : new_selector.image_list){
+                i.set_visible(0); //this is an example of looping trough our stacks. if you want to go trough every image and make them invisible, we just go trough every image registered and make them inviisble
+            }
             if(route.routine_name == "loli_run"){logif.set_visible(1);}
-            if(route.routine_name == "apple_run"){auto2.set_visible(1);}
+            if(route.routine_name == "apple_run"){auto2.set_visible(1);} //then we come over here and make them visible if they match the selected routine
         });
 
         y += 33;
@@ -90,13 +92,12 @@ void initialize() {
     toggle_btn.set_background_color(pros::Color::slate_blue);
     toggle_btn.on_render = [&](selector::element& el) {
         toggle_btn.fill();
-        selector::draw_text(toggle_btn.chord1.x + 6, toggle_btn.chord1.y + 6, "hide logo");
+        selector::draw_text(toggle_btn.chord1.x + 6, toggle_btn.chord1.y + 6, "hide gif");
     };
-    toggle_btn.on_click([&, reset_all]() {
-        //logif.set_visible(!logif.vid->visible);//since the logif object was returned to us and we stored it in a variable we can make changes to it
-        //for now this button just changes the visibility. the good thing about visibility is that for complex objects or large amounts its better to make them invisible until you need them
-        //since we skip invisible objects in the rendering pipeline making performance go up even with dozens of menu layers or a bunch of gifs
-        reset_all();
+    toggle_btn.on_click([&]() {
+        for(selector::image i : new_selector.image_list){
+            i.set_visible(0);
+        }
     });
 
 
